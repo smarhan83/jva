@@ -383,6 +383,22 @@ a.item:hover, .btn-item:hover { border-color: var(--accent); }
     .rt { left: calc(var(--side) + 1rem); right: 1rem; bottom: 1rem; max-width: 560px; }
 }
 
+/* ---------- Exercise video links (YouTube) ---------- */
+.vl-icon { flex: none; display: grid; place-items: center; width: 26px; height: 19px; border-radius: 6px; background: #ff0033; box-shadow: 0 2px 6px rgba(255, 0, 51, .35); }
+.vl-icon svg { width: 15px; height: 15px; fill: #fff; }
+.vl-chip { display: inline-flex; align-items: center; gap: .5rem; margin-top: .4rem; padding: .22rem .75rem .22rem .3rem; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--text); font-size: .78rem; font-weight: 700; text-decoration: none !important; transition: border-color .15s, transform .1s, box-shadow .15s; }
+.vl-chip:hover { border-color: #ff0033; box-shadow: 0 2px 10px rgba(255, 0, 51, .18); }
+.vl-chip:active { transform: scale(.97); }
+.vl-card { display: flex; align-items: center; gap: .8rem; padding: .6rem .9rem .6rem .7rem; border-radius: 16px; border: 1px solid var(--line); background: var(--card); color: var(--text); text-decoration: none !important; transition: border-color .15s, transform .1s; touch-action: manipulation; }
+.vl-card:hover { border-color: #ff0033; }
+.vl-card:active { transform: scale(.985); }
+.vl-card .vl-icon { width: 38px; height: 27px; border-radius: 8px; }
+.vl-card .vl-icon svg { width: 21px; height: 21px; }
+.vl-text { flex: 1; display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+.vl-text b { font-size: .95rem; }
+.vl-text small { color: var(--muted); font-weight: 600; font-size: .72rem; }
+.vl-go { color: var(--muted); font-weight: 800; font-size: 1.1rem; }
+
 /* ---------- Language switch (BM | EN) ---------- */
 .lang-switch { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--card); flex: none; }
 .lang-switch a { padding: .28rem .6rem; font-size: .74rem; font-weight: 800; letter-spacing: .04em; color: var(--muted); text-decoration: none !important; }
