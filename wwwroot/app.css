@@ -383,6 +383,35 @@ a.item:hover, .btn-item:hover { border-color: var(--accent); }
     .rt { left: calc(var(--side) + 1rem); right: 1rem; bottom: 1rem; max-width: 560px; }
 }
 
+/* ---------- Start / continue workout call-to-action ---------- */
+.cta-bar {
+    width: 100%; display: flex; align-items: center; gap: 1rem; margin: .25rem 0 1rem; padding: 1rem 1.1rem;
+    border: 0; border-radius: 22px; cursor: pointer; text-align: left; color: #fff; font: inherit;
+    background: linear-gradient(135deg, #ff5a36 0%, #ff8a1f 100%);
+    box-shadow: 0 10px 28px rgba(255, 90, 54, .38), inset 0 1px 0 rgba(255, 255, 255, .25);
+    animation: cta-pulse 2.4s ease-in-out infinite; touch-action: manipulation;
+}
+.cta-bar:hover { filter: brightness(1.06); }
+.cta-bar:active { transform: scale(.985); }
+.cta-bar:disabled { opacity: .6; animation: none; }
+.cta-icon { flex: none; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: #ff5a36; font-size: 1.3rem; padding-left: 3px; }
+.cta-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.cta-text b { font-family: var(--display); font-size: 1.7rem; font-weight: 800; letter-spacing: .06em; line-height: 1.05; }
+.cta-text small { opacity: .92; font-weight: 600; }
+.cta-arrow { font-size: 1.8rem; font-weight: 800; }
+@keyframes cta-pulse { 50% { box-shadow: 0 10px 34px rgba(255, 90, 54, .6), inset 0 1px 0 rgba(255, 255, 255, .25); } }
+.btn.ok { background: transparent; border-color: var(--ok); color: var(--ok); }
+
+/* ---------- Exercise cards: alternating colour so neighbours never blend ---------- */
+.ex { --ex-hue: var(--accent); border: 1px solid color-mix(in srgb, var(--ex-hue) 45%, var(--line)); border-left: 6px solid var(--ex-hue); background: color-mix(in srgb, var(--ex-hue) 7%, var(--card)); box-shadow: var(--shadow); margin-bottom: 1.25rem; }
+.ex:nth-of-type(even) { --ex-hue: var(--blue); }
+.ex .ex-head { background: color-mix(in srgb, var(--ex-hue) 16%, var(--card)); border-bottom-color: color-mix(in srgb, var(--ex-hue) 35%, var(--line)); }
+.ex .ex-no { background: var(--ex-hue); color: #0a0e13; }
+.ex .prev { background: color-mix(in srgb, var(--ex-hue) 9%, var(--card2)); border-bottom-color: color-mix(in srgb, var(--ex-hue) 25%, var(--line)); }
+.ex .set-row:not(.set-head):not(.done) { background: color-mix(in srgb, var(--ex-hue) 5%, transparent); }
+.ex .set-row + .set-row { border-top: 1px solid color-mix(in srgb, var(--ex-hue) 14%, transparent); }
+.ex .ex-foot { border-top: 1px dashed color-mix(in srgb, var(--ex-hue) 30%, var(--line)); margin-top: .25rem; padding-top: .75rem; }
+
 /* ---------- Set types (warm-up / normal / failure) ---------- */
 button.set-no { border: 0; background: transparent; padding: 0; cursor: pointer; font: inherit; font-family: var(--display); font-weight: 800; font-size: 1.2rem; color: var(--accent-text); text-align: center; min-height: 36px; border-radius: 10px; }
 button.set-no:disabled { cursor: default; }
