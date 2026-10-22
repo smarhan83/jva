@@ -47,12 +47,97 @@ window.gymFullscreen = (function () {
     // Any element marked data-fs="enter" goes full screen when tapped (runs in the same user gesture as the tap).
     document.addEventListener('click', function (ev) {
         var el = ev.target.closest && ev.target.closest('[data-fs="enter"]');
-        if (el && !el.disabled) enter();
+        if (el && !el.disabled) {
+            enter();
+            if (el.getAttribute('data-awake') === '1' && window.gymWake) window.gymWake.enable();   // same tap = a real user gesture
+        }
     }, true);
     document.addEventListener('fullscreenchange', sync);
     document.addEventListener('webkitfullscreenchange', sync);
     sync();
     return { enter: enter, exit: exit, isOn: isOn, supported: supported, toggle: function () { isOn() ? exit() : enter(); } };
+})();
+
+// Keep the phone screen on during a workout.
+// 1) Screen Wake Lock API (needs HTTPS). 2) Fallback for plain HTTP / older browsers: a tiny, invisible video that is "playing"
+// (the same trick phones use for video calls), which keeps most mobile browsers from locking the screen.
+window.gymWake = (function () {
+    var lock = null, video = null, canvas = null, timer = null, wanted = false, mode = 'none';
+
+    function mark() { document.documentElement.classList.toggle('screen-awake', mode !== 'none'); }
+
+    function viaWakeLock() {
+        if (!('wakeLock' in navigator) || !navigator.wakeLock) return Promise.resolve(false);
+        return navigator.wakeLock.request('screen').then(function (l) {
+            lock = l;
+            mode = 'wakelock';
+            mark();
+            l.addEventListener('release', function () {
+                lock = null;
+                if (mode === 'wakelock') { mode = 'none'; mark(); }
+            });
+            return true;
+        }).catch(function () { return false; });
+    }
+
+    function viaVideo() {
+        try {
+            if (!canvas) { canvas = document.createElement('canvas'); canvas.width = canvas.height = 2; }
+            if (!canvas.captureStream) return false;
+            var ctx = canvas.getContext('2d'), n = 0;
+            function draw() { ctx.fillStyle = (n++ % 2) ? '#000000' : '#010101'; ctx.fillRect(0, 0, 2, 2); }
+            draw();
+            if (!video) {
+                video = document.createElement('video');
+                video.setAttribute('playsinline', '');
+                video.setAttribute('aria-hidden', 'true');
+                video.muted = true;
+                video.loop = true;
+                video.style.cssText = 'position:fixed;left:0;top:0;width:2px;height:2px;opacity:0.01;pointer-events:none;';
+                document.body.appendChild(video);
+            }
+            video.srcObject = canvas.captureStream(5);
+            timer = setInterval(draw, 500);
+            var p = video.play();
+            if (p && p.catch) p.catch(function () { /* retried on the next tap / when the tab is visible again */ });
+            mode = 'video';
+            mark();
+            return true;
+        } catch (e) { return false; }
+    }
+
+    function enable() {
+        wanted = true;
+        if (mode !== 'none') return Promise.resolve(mode);
+        return viaWakeLock().then(function (ok) {
+            if (!ok) viaVideo();
+            return mode;
+        });
+    }
+
+    function disable() {
+        wanted = false;
+        try { if (lock) lock.release(); } catch (e) { }
+        lock = null;
+        if (timer) { clearInterval(timer); timer = null; }
+        if (video) { try { video.pause(); video.srcObject = null; video.remove(); } catch (e) { } video = null; }
+        mode = 'none';
+        mark();
+    }
+
+    // The browser drops wake locks when the tab is hidden: take it again when the user comes back.
+    document.addEventListener('visibilitychange', function () {
+        if (!wanted || document.visibilityState !== 'visible') return;
+        if (mode === 'none') enable();
+        else if (mode === 'video' && video) { var p = video.play(); if (p && p.catch) p.catch(function () { }); }
+    });
+
+    // A tap can also (re)start a video that the browser refused to autoplay.
+    document.addEventListener('pointerdown', function () {
+        if (wanted && mode === 'video' && video && video.paused) { var p = video.play(); if (p && p.catch) p.catch(function () { }); }
+    }, { passive: true });
+
+    return { enable: enable, disable: disable, mode: function () { return mode; } };
 })();
 
 // Rest timer — runs entirely in the browser (no server round-trip per second).

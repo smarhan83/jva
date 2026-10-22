@@ -452,6 +452,20 @@ a.item:hover, .btn-item:hover { border-color: var(--accent); }
 .formula-table td { padding: .3rem; }
 .formula-table td:first-child { font-weight: 800; white-space: nowrap; }
 .formula-table input { text-align: center; font-weight: 700; }
+.food-grid { display: grid; gap: .5rem; margin: .5rem 0; }
+.food { display: flex; align-items: center; gap: .75rem; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: .7rem .9rem; }
+.food-icon { font-size: 1.8rem; }
+.food-main { flex: 1; min-width: 0; }
+.food-main b { display: block; }
+.food-main small { color: var(--muted); }
+.food-amt { font-family: var(--display); font-size: 1.6rem; font-weight: 800; white-space: nowrap; }
+.food-amt small { font-family: var(--font); font-size: .85rem; color: var(--muted); font-weight: 700; }
+.food-total { display: flex; justify-content: space-between; gap: .75rem; padding: .7rem .9rem; border-radius: 14px; background: color-mix(in srgb, var(--accent, var(--ok)) 15%, transparent); font-weight: 700; }
+.food-ref { margin: .5rem 0 1rem; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: .6rem .9rem; }
+.food-ref summary { cursor: pointer; font-weight: 700; }
+.food-ref table { width: 100%; border-collapse: collapse; margin-top: .5rem; font-size: .9rem; }
+.food-ref th { text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: .3rem; }
+.food-ref td { padding: .3rem; border-top: 1px solid var(--line); }
 
 /* Suggested (not yet recorded) values pre-filled from last time */
 .set-row input.pre { color: var(--muted); font-style: italic; font-weight: 600; border-style: dashed; }
@@ -615,6 +629,12 @@ button.set-no.type-failure { color: var(--hot); }
 .brand-mark .logo-svg, .logo-mark .logo-svg { width: 78%; height: 78%; }
 .brand-mark, .logo-mark { color: var(--accent-ink); }
 
+.item-time { color: var(--accent-text) !important; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: .1rem; }
+
+/* Screen-awake indicator (shown only while the screen is being kept on) */
+.wk-awake { display: none; flex: none; font-size: 1.1rem; }
+.screen-awake .wk-awake { display: inline; }
+
 /* Full-screen toggle (only shown when the browser supports it) */
 .wk-fs { display: none; flex: none; width: 44px; height: 44px; place-items: center; border-radius: 14px; background: var(--card); border: 1px solid var(--line); color: var(--muted); font-size: 1.25rem; cursor: pointer; }
 .fs-supported .wk-fs { display: grid; }
@@ -645,3 +665,7 @@ button.set-no.type-failure { color: var(--hot); }
 .blazor-error-boundary { background: #b32121; padding: 1rem; color: #fff; border-radius: 12px; }
 .blazor-error-boundary::after { content: "Ralat berlaku."; }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+.food-opt { margin: 1rem 0 .3rem; font-size: 1.05rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
+.err-text { color: var(--hot); }
+.macro-stats .stat b { font-size: 1.5rem; }
