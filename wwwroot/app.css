@@ -25,8 +25,23 @@
     color-scheme: dark;
 }
 
+/* Theme: the user can force light/dark (Settings); with no choice ("auto") the device preference is used. */
+:root[data-theme="light"] {
+    --bg: #f2f5f9;
+    --bg2: #e9eef4;
+    --card: #ffffff;
+    --card2: #f4f7fb;
+    --line: #dde4ed;
+    --text: #0c141d;
+    --muted: #5d6b7d;
+    --accent: #b4f000;
+    --accent-text: #3f6b00;
+    --shadow: 0 8px 24px rgba(20, 40, 70, .08);
+    color-scheme: light;
+}
+
 @media (prefers-color-scheme: light) {
-    :root {
+    :root:not([data-theme]) {
         --bg: #f2f5f9;
         --bg2: #e9eef4;
         --card: #ffffff;
@@ -259,7 +274,8 @@ a.item:hover, .btn-item:hover { border-color: var(--accent); }
     display: flex; flex-direction: column; gap: 1rem;
 }
 .hero::after { content: ""; position: absolute; right: -60px; top: -60px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 45%, transparent), transparent 70%); pointer-events: none; }
-@media (prefers-color-scheme: light) { .hero { background: linear-gradient(135deg, #1a2a07, #25400b 55%, #3c6a05); } }
+:root[data-theme="light"] .hero { background: linear-gradient(135deg, #1a2a07, #25400b 55%, #3c6a05); }
+@media (prefers-color-scheme: light) { :root:not([data-theme]) .hero { background: linear-gradient(135deg, #1a2a07, #25400b 55%, #3c6a05); } }
 .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: .7rem; font-weight: 800; color: var(--accent); }
 .hero h1 { font-size: 2.6rem; margin: .2rem 0; color: #fff; }
 .hero p { color: #cfe0b5; }
@@ -574,6 +590,46 @@ button.set-no.type-failure { color: var(--hot); }
 .wk .rt.over .rt-go { background: #fff; color: #b00; border-color: #fff; }
 .rt-go { display: none; }
 .wk .rt .rt-go { display: grid; place-items: center; }
+
+/* ---------- Workout polish: highlighted weight / reps panels, bigger rest label ---------- */
+.wk .wk-field {
+    background: color-mix(in srgb, var(--accent) 8%, var(--card));
+    border: 2px solid color-mix(in srgb, var(--accent) 50%, var(--line));
+    border-radius: 22px;
+    padding: .45rem .6rem .6rem;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 9%, transparent), 0 8px 22px rgba(0, 0, 0, .22);
+}
+.wk .wk-field label { color: var(--accent-text); font-size: .85rem; letter-spacing: .14em; margin-bottom: .3rem; }
+.wk .wk-stepper input {
+    background: var(--bg); color: var(--accent-text); font-size: 3.1rem; min-height: 56px;
+    border: 2px solid color-mix(in srgb, var(--accent) 60%, var(--line));
+}
+.wk .wk-stepper button {
+    min-height: 56px; color: var(--accent-text);
+    background: color-mix(in srgb, var(--accent) 18%, var(--card2));
+    border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+}
+.wk .wk-stepper button:active { background: var(--accent); color: var(--accent-ink); }
+
+/* Keep everything on one phone screen: tighter on shorter devices */
+@media (max-height: 900px) {
+    .wk .wk-field { padding: .3rem .5rem .45rem; border-radius: 18px; }
+    .wk .wk-field label { font-size: .74rem; margin-bottom: .2rem; }
+    .wk .wk-stepper { grid-template-columns: 56px 1fr 56px; gap: .4rem; }
+    .wk .wk-stepper button, .wk .wk-stepper input { min-height: 50px; }
+    .wk .wk-stepper input { font-size: 2.7rem; }
+    .wk .wk-stepper button { font-size: 2rem; }
+    .wk .wk-fail { min-height: 44px; }
+    .wk .wk-body { gap: .4rem; }
+    .wk .wk-last { padding: .4rem .7rem; }
+    .wk .wk-last-main { font-size: 1.45rem; }
+    .wk .wk-type { min-height: 36px; }
+    .wk .wk-link { min-height: 34px; padding: .2rem .3rem; }
+}
+
+.wk .rt .rt-label { font-size: 1.55rem; font-weight: 800; letter-spacing: .02em; line-height: 1.2; text-transform: uppercase; color: var(--text); max-width: 92vw; }
+.wk .rt .rt-msg { font-size: 1.5rem; font-weight: 700; color: var(--text); opacity: .9; }
+.wk .rt.over .rt-label { color: #fff; }
 
 /* ---------- Validation / Blazor ---------- */
 .validation-message { color: var(--hot); font-size: .8rem; }

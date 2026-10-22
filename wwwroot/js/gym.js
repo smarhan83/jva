@@ -1,3 +1,24 @@
+// Appearance: "light", "dark" or "auto" (follow the device). The server also reads the cookie to render the right theme at once.
+window.gymTheme = (function () {
+    function apply(mode) {
+        var root = document.documentElement;
+        if (mode === 'light' || mode === 'dark') root.setAttribute('data-theme', mode);
+        else root.removeAttribute('data-theme');
+        var meta = document.querySelector('meta[name=theme-color]');
+        if (meta) {
+            var dark = mode === 'dark' || (mode !== 'light' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            meta.setAttribute('content', dark ? '#0b0f14' : '#f2f5f9');
+        }
+    }
+    return {
+        set: function (mode) {
+            mode = (mode === 'light' || mode === 'dark') ? mode : 'auto';
+            document.cookie = 'gym.theme=' + mode + '; path=/; max-age=31536000; samesite=lax';
+            apply(mode);
+        }
+    };
+})();
+
 // Rest timer — runs entirely in the browser (no server round-trip per second).
 // The countdown is based on a deadline timestamp, so it stays correct even if the tab is throttled or delayed.
 window.gymTimer = (function () {
