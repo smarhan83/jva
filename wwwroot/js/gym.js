@@ -19,6 +19,42 @@ window.gymTheme = (function () {
     };
 })();
 
+// Full screen for workout mode. Browsers only allow it from a user tap, so it is started from the button's own click.
+// (iPhone Safari has no full-screen API: there, use "Add to Home Screen" and the app opens full screen.)
+window.gymFullscreen = (function () {
+    function isOn() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+    function supported() { return !!(document.fullscreenEnabled || document.webkitFullscreenEnabled); }
+    function enter() {
+        try {
+            if (!supported() || isOn()) return;
+            var el = document.documentElement;
+            var p = el.requestFullscreen ? el.requestFullscreen({ navigationUI: 'hide' }) : (el.webkitRequestFullscreen && el.webkitRequestFullscreen());
+            if (p && p.catch) p.catch(function () { /* the user can try again with the button */ });
+        } catch (e) { /* optional */ }
+    }
+    function exit() {
+        try {
+            if (!isOn()) return;
+            var p = document.exitFullscreen ? document.exitFullscreen() : (document.webkitExitFullscreen && document.webkitExitFullscreen());
+            if (p && p.catch) p.catch(function () { });
+        } catch (e) { /* optional */ }
+    }
+    function sync() {
+        var on = isOn();
+        document.documentElement.classList.toggle('is-fullscreen', on);
+        document.documentElement.classList.toggle('fs-supported', supported());
+    }
+    // Any element marked data-fs="enter" goes full screen when tapped (runs in the same user gesture as the tap).
+    document.addEventListener('click', function (ev) {
+        var el = ev.target.closest && ev.target.closest('[data-fs="enter"]');
+        if (el && !el.disabled) enter();
+    }, true);
+    document.addEventListener('fullscreenchange', sync);
+    document.addEventListener('webkitfullscreenchange', sync);
+    sync();
+    return { enter: enter, exit: exit, isOn: isOn, supported: supported, toggle: function () { isOn() ? exit() : enter(); } };
+})();
+
 // Rest timer — runs entirely in the browser (no server round-trip per second).
 // The countdown is based on a deadline timestamp, so it stays correct even if the tab is throttled or delayed.
 window.gymTimer = (function () {
