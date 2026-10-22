@@ -5,6 +5,16 @@ window.gymTimer = (function () {
     var tick = null;
     var audioCtx = null;
 
+    // Texts for the two supported languages (the page language comes from <html lang>).
+    var TEXT = {
+        ms: { pause: 'Pause', resume: 'Resume', add: '+15s', reset: 'Reset', close: 'Tutup', go: 'Teruskan ▶', rest: 'Rehat', resting: 'Berehat…', paused: 'Dijeda', over: 'REST TIME OVER!' },
+        en: { pause: 'Pause', resume: 'Resume', add: '+15s', reset: 'Reset', close: 'Close', go: 'Continue ▶', rest: 'Rest', resting: 'Resting…', paused: 'Paused', over: 'REST TIME OVER!' }
+    };
+    function t(key) {
+        var lang = ((document.documentElement.lang || 'ms') + '').slice(0, 2);
+        return (TEXT[lang] || TEXT.ms)[key];
+    }
+
     function root() { return document.getElementById('rest-timer'); }
 
     function fmt(sec) {
@@ -21,11 +31,11 @@ window.gymTimer = (function () {
                 '<div class="rt-inner">' +
                 '<div class="rt-info"><div class="rt-label"></div><div class="rt-time" aria-live="off">00:00</div><div class="rt-msg"></div></div>' +
                 '<div class="rt-btns">' +
-                '<button type="button" data-a="pause" class="rt-btn">Pause</button>' +
-                '<button type="button" data-a="add" class="rt-btn">+15s</button>' +
-                '<button type="button" data-a="reset" class="rt-btn">Reset</button>' +
-                '<button type="button" data-a="close" class="rt-btn rt-x" aria-label="Tutup">✕</button>' +
-                '<button type="button" data-a="close" class="rt-btn rt-go">Teruskan ▶</button>' +
+                '<button type="button" data-a="pause" class="rt-btn">' + t('pause') + '</button>' +
+                '<button type="button" data-a="add" class="rt-btn">' + t('add') + '</button>' +
+                '<button type="button" data-a="reset" class="rt-btn">' + t('reset') + '</button>' +
+                '<button type="button" data-a="close" class="rt-btn rt-x" aria-label="' + t('close') + '">✕</button>' +
+                '<button type="button" data-a="close" class="rt-btn rt-go">' + t('go') + '</button>' +
                 '</div></div>';
         }
         return el;
@@ -41,11 +51,11 @@ window.gymTimer = (function () {
         var rem = remaining();
         el.classList.add('show');
         el.classList.toggle('over', state.over);
-        el.querySelector('.rt-label').textContent = state.label || 'Rehat';
+        el.querySelector('.rt-label').textContent = state.label || t('rest');
         el.querySelector('.rt-time').textContent = fmt(rem);
-        el.querySelector('.rt-msg').textContent = state.over ? 'REST TIME OVER!' : (state.running ? 'Berehat…' : 'Dijeda');
+        el.querySelector('.rt-msg').textContent = state.over ? t('over') : (state.running ? t('resting') : t('paused'));
         var pause = el.querySelector('[data-a=pause]');
-        pause.textContent = state.running ? 'Pause' : 'Resume';
+        pause.textContent = state.running ? t('pause') : t('resume');
         pause.disabled = state.over;
     }
 

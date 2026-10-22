@@ -383,6 +383,47 @@ a.item:hover, .btn-item:hover { border-color: var(--accent); }
     .rt { left: calc(var(--side) + 1rem); right: 1rem; bottom: 1rem; max-width: 560px; }
 }
 
+/* ---------- Language switch (BM | EN) ---------- */
+.lang-switch { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--card); flex: none; }
+.lang-switch a { padding: .28rem .6rem; font-size: .74rem; font-weight: 800; letter-spacing: .04em; color: var(--muted); text-decoration: none !important; }
+.lang-switch a.on { background: var(--accent); color: var(--accent-ink); }
+.lang-switch a:not(.on):hover { color: var(--text); }
+.me .lang-switch { margin-right: .15rem; }
+.auth-hero-top { display: flex; align-items: center; justify-content: space-between; }
+.auth-hero .lang-switch { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .25); }
+.auth-hero .lang-switch a { color: #cdd8bd; }
+.auth-hero .lang-switch a.on { color: #0a0e13; }
+.lang-seg a { flex: 1; text-align: center; border-radius: 9px; padding: .55rem .6rem; font-weight: 700; color: var(--muted); text-decoration: none !important; min-height: 40px; display: grid; place-items: center; }
+.lang-seg a.on { background: var(--accent); color: var(--accent-ink); }
+
+/* ---------- Calorie calculator ---------- */
+.goal-grid { display: grid; grid-template-columns: 1fr; gap: .6rem; margin-bottom: 1rem; }
+@media (min-width: 640px) { .goal-grid { grid-template-columns: repeat(3, 1fr); } }
+.goal { --g: var(--accent); text-align: left; display: flex; flex-direction: column; gap: .15rem; padding: .85rem 1rem; border-radius: 18px; cursor: pointer; font: inherit; color: var(--text); background: var(--card); border: 2px solid var(--line); border-left: 6px solid var(--g); touch-action: manipulation; }
+.goal-deficit, .cal-hero.goal-deficit { --g: var(--blue); }
+.goal-maintenance, .cal-hero.goal-maintenance { --g: var(--ok); }
+.goal-surplus, .cal-hero.goal-surplus { --g: var(--hot); }
+.goal:hover { border-color: color-mix(in srgb, var(--g) 60%, var(--line)); border-left-color: var(--g); }
+.goal.on { border-color: var(--g); background: color-mix(in srgb, var(--g) 14%, var(--card)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--g) 25%, transparent); }
+.goal-name { font-family: var(--display); font-weight: 800; font-size: 1.5rem; text-transform: uppercase; letter-spacing: .04em; }
+.goal-kcal { font-family: var(--display); font-weight: 800; font-size: 2rem; line-height: 1; }
+.goal-kcal small { font-family: var(--font); font-size: .8rem; color: var(--muted); font-weight: 700; }
+.goal-hint { font-size: .85rem; color: var(--muted); }
+.cal-hero { --g: var(--ok); border-radius: 22px; padding: 1.25rem 1.4rem; margin-bottom: .75rem; color: #fff; background: linear-gradient(135deg, color-mix(in srgb, var(--g) 70%, #000) 0%, color-mix(in srgb, var(--g) 90%, #fff 0%) 100%); box-shadow: var(--shadow); }
+.cal-hero small { opacity: .9; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.cal-kcal { font-family: var(--display); font-weight: 800; font-size: clamp(3.2rem, 14vw, 5.5rem); line-height: 1; margin: .25rem 0; }
+.cal-kcal span { font-family: var(--font); font-size: 1rem; font-weight: 700; opacity: .9; }
+.cal-formula { font-weight: 700; }
+.muted-on-dark { opacity: .8; font-weight: 500; margin-left: .35rem; }
+.formula-table { width: 100%; border-collapse: collapse; }
+.formula-table th { text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: .4rem .3rem; }
+.formula-table td { padding: .3rem; }
+.formula-table td:first-child { font-weight: 800; white-space: nowrap; }
+.formula-table input { text-align: center; font-weight: 700; }
+
+/* Suggested (not yet recorded) values pre-filled from last time */
+.set-row input.pre { color: var(--muted); font-style: italic; font-weight: 600; border-style: dashed; }
+
 /* ---------- Start / continue workout call-to-action ---------- */
 .cta-bar {
     width: 100%; display: flex; align-items: center; gap: 1rem; margin: .25rem 0 1rem; padding: 1rem 1.1rem;
