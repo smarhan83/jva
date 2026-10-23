@@ -308,8 +308,20 @@ a.item:hover, .btn-item:hover { border-color: var(--accent); }
 .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: .7rem; font-weight: 800; color: var(--accent); }
 .hero h1 { font-size: 2.6rem; margin: .2rem 0; color: #fff; }
 .hero p { color: #cfe0b5; }
-.hero-actions { display: flex; flex-wrap: wrap; gap: .6rem; position: relative; z-index: 1; }
-.hero .btn.ghost { color: #fff; border-color: rgba(255, 255, 255, .3); }
+.hero h1 { font-size: clamp(1.9rem, 8.4vw, 2.6rem); line-height: 1.05; text-wrap: balance; overflow-wrap: anywhere; }
+.hero-actions { display: grid; grid-template-columns: 1fr; gap: .65rem; position: relative; z-index: 1; width: 100%; }
+.hero-btn { display: flex; align-items: center; gap: .85rem; min-height: 60px; padding: .6rem .9rem .6rem .65rem; border-radius: 18px; font-weight: 800; font-size: 1.02rem; text-decoration: none !important; transition: transform .12s, filter .15s, background .15s; }
+.hero-btn:active { transform: scale(.98); }
+.hero-btn .hb-icon { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 13px; font-size: 1.25rem; }
+.hero-btn .hb-text { flex: 1; min-width: 0; }
+.hero-btn .hb-go { flex: none; font-size: 1.25rem; opacity: .7; }
+.hero-btn.primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 8px 22px -8px color-mix(in srgb, var(--accent) 70%, transparent); }
+.hero-btn.primary .hb-icon { background: rgba(0, 0, 0, .12); }
+.hero-btn.primary:hover { filter: brightness(1.06); }
+.hero-btn.glass { color: #fff; background: rgba(255, 255, 255, .09); border: 1px solid rgba(255, 255, 255, .2); backdrop-filter: blur(6px); }
+.hero-btn.glass .hb-icon { background: rgba(255, 255, 255, .12); }
+.hero-btn.glass:hover { background: rgba(255, 255, 255, .15); }
+@media (min-width: 720px) { .hero-actions { width: auto; min-width: 20rem; } }
 @media (min-width: 720px) { .hero { flex-direction: row; align-items: center; justify-content: space-between; padding: 2rem; } .hero h1 { font-size: 3.2rem; } }
 
 .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; margin-bottom: 1rem; }
