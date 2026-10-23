@@ -19,44 +19,11 @@ window.gymTheme = (function () {
     };
 })();
 
-// Full screen for workout mode. Browsers only allow it from a user tap, so it is started from the button's own click.
-// (iPhone Safari has no full-screen API: there, use "Add to Home Screen" and the app opens full screen.)
-window.gymFullscreen = (function () {
-    function isOn() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
-    function supported() { return !!(document.fullscreenEnabled || document.webkitFullscreenEnabled); }
-    function enter() {
-        try {
-            if (!supported() || isOn()) return;
-            var el = document.documentElement;
-            var p = el.requestFullscreen ? el.requestFullscreen({ navigationUI: 'hide' }) : (el.webkitRequestFullscreen && el.webkitRequestFullscreen());
-            if (p && p.catch) p.catch(function () { /* the user can try again with the button */ });
-        } catch (e) { /* optional */ }
-    }
-    function exit() {
-        try {
-            if (!isOn()) return;
-            var p = document.exitFullscreen ? document.exitFullscreen() : (document.webkitExitFullscreen && document.webkitExitFullscreen());
-            if (p && p.catch) p.catch(function () { });
-        } catch (e) { /* optional */ }
-    }
-    function sync() {
-        var on = isOn();
-        document.documentElement.classList.toggle('is-fullscreen', on);
-        document.documentElement.classList.toggle('fs-supported', supported());
-    }
-    // Any element marked data-fs="enter" goes full screen when tapped (runs in the same user gesture as the tap).
-    document.addEventListener('click', function (ev) {
-        var el = ev.target.closest && ev.target.closest('[data-fs="enter"]');
-        if (el && !el.disabled) {
-            enter();
-            if (el.getAttribute('data-awake') === '1' && window.gymWake) window.gymWake.enable();   // same tap = a real user gesture
-        }
-    }, true);
-    document.addEventListener('fullscreenchange', sync);
-    document.addEventListener('webkitfullscreenchange', sync);
-    sync();
-    return { enter: enter, exit: exit, isOn: isOn, supported: supported, toggle: function () { isOn() ? exit() : enter(); } };
-})();
+// Starting a session: the tap on the start button (a real user gesture) also turns on keep-screen-awake when the user has it enabled.
+document.addEventListener('click', function (ev) {
+    var el = ev.target.closest && ev.target.closest('[data-awake="1"]');
+    if (el && !el.disabled && window.gymWake) window.gymWake.enable();
+}, true);
 
 // Keep the phone screen on during a workout.
 // 1) Screen Wake Lock API (needs HTTPS). 2) Fallback for plain HTTP / older browsers: a tiny, invisible video that is "playing"

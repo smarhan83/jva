@@ -664,10 +664,6 @@ button.set-no.type-failure { color: var(--hot); }
 .wk-awake { display: none; flex: none; font-size: 1.1rem; }
 .screen-awake .wk-awake { display: inline; }
 
-/* Full-screen toggle (only shown when the browser supports it) */
-.wk-fs { display: none; flex: none; width: 44px; height: 44px; place-items: center; border-radius: 14px; background: var(--card); border: 1px solid var(--line); color: var(--muted); font-size: 1.25rem; cursor: pointer; }
-.fs-supported .wk-fs { display: grid; }
-.is-fullscreen .wk-fs { color: var(--accent-text); border-color: var(--accent); }
 
 /* Keep everything on one phone screen: tighter on shorter devices */
 @media (max-height: 900px) {
