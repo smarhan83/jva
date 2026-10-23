@@ -706,3 +706,41 @@ button.set-no.type-failure { color: var(--hot); }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
 .err-text { color: var(--hot); }
 .macro-stats .stat b { font-size: 1.5rem; }
+.count { font-style: normal; margin-left: .35rem; padding: 0 .5rem; border-radius: 999px; background: var(--card2); color: var(--muted); font-size: .72rem; font-weight: 800; }
+
+/* ---------- In-page media viewer (YouTube / image / video) ---------- */
+.media-open body { overflow: hidden; }
+.media-back { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: .75rem; background: rgba(0, 0, 0, .78); backdrop-filter: blur(4px); }
+.media-modal { width: min(100%, 860px); max-height: 100%; display: flex; flex-direction: column; background: var(--bg2); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); }
+.media-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .7rem .9rem; border-bottom: 1px solid var(--line); }
+.media-head b { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.media-x { flex: none; width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--text); font-size: 1.1rem; cursor: pointer; }
+.media-body { background: #000; display: flex; align-items: center; justify-content: center; min-height: 0; }
+.media-body.youtube, .media-body.video { aspect-ratio: 16 / 9; }
+.media-body iframe, .media-body video { width: 100%; height: 100%; border: 0; display: block; }
+.media-body.image { background: var(--card); max-height: 70vh; }
+.media-body img { max-width: 100%; max-height: 70vh; object-fit: contain; display: block; }
+.media-foot { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; padding: .6rem .9rem; font-size: .8rem; color: var(--muted); }
+.media-foot a { color: var(--accent-text); font-weight: 700; }
+.vl-icon.img { background: var(--blue); box-shadow: 0 2px 6px color-mix(in srgb, var(--blue) 40%, transparent); }
+.rt-media { margin-top: .4rem; }
+.rt-watch { display: inline-flex; align-items: center; gap: .4rem; padding: .5rem .9rem; border-radius: 999px; background: var(--card); border: 1px solid var(--line); color: var(--text); font-weight: 700; font-size: .9rem; text-decoration: none !important; }
+.rt-watch:hover { border-color: var(--accent); }
+.rt.over .rt-watch { background: rgba(255, 255, 255, .18); border-color: rgba(255, 255, 255, .4); color: #fff; }
+.wk .rt .rt-watch { min-height: 48px; padding: .6rem 1.2rem; font-size: 1rem; }
+
+/* exercise list */
+.badge.b-mine { background: color-mix(in srgb, var(--accent) 22%, transparent); color: var(--accent-text); border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); }
+.mini-create { margin-top: .75rem; padding: .85rem; border: 1px dashed var(--line); border-radius: 16px; background: var(--card); display: grid; gap: .6rem; }
+.prog-ex { margin-bottom: .75rem; }
+.prog-ex .card-head { align-items: center; }
+.prog-trend { font-weight: 800; font-size: .9rem; white-space: nowrap; }
+
+/* filter bar: compact segmented control that lines up with the 44px inputs */
+.filters .seg button { white-space: nowrap; min-height: 36px; padding: .3rem .75rem; font-size: .92rem; }
+.filters .seg { min-height: 44px; align-items: stretch; }
+.filters > .btn { min-height: 44px; }
+@media (min-width: 640px) {
+    .filters { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+    .filters .field-wide { grid-column: span 2; }
+}

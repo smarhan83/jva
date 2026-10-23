@@ -107,17 +107,80 @@ window.gymWake = (function () {
     return { enable: enable, disable: disable, mode: function () { return mode; } };
 })();
 
+// In-page viewer for exercise media (YouTube / image / video), so the phone does not jump to the YouTube app.
+// Any link with data-media="youtube|image|video" and data-src opens here; its href stays as the fallback (new tab).
+window.gymMedia = (function () {
+    var box = null;
+    var TEXT = {
+        ms: { close: 'Tutup', ext: 'Buka di tab baharu ↗', hint: 'Video tidak dapat dimainkan? ' },
+        en: { close: 'Close', ext: 'Open in a new tab ↗', hint: 'Video will not play? ' }
+    };
+    function t(key) {
+        var lang = ((document.documentElement.lang || 'ms') + '').slice(0, 2);
+        return (TEXT[lang] || TEXT.ms)[key];
+    }
+    function esc(s) { return String(s || '').replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+    function close() {
+        if (!box) return;
+        box.remove();          // removing the element also stops the video / audio
+        box = null;
+        document.documentElement.classList.remove('media-open');
+    }
+
+    function open(info) {
+        close();
+        var body;
+        if (info.kind === 'youtube')
+            body = '<iframe src="' + esc(info.src) + '" title="' + esc(info.title) + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+        else if (info.kind === 'video')
+            body = '<video src="' + esc(info.src) + '" controls autoplay playsinline></video>';
+        else
+            body = '<img src="' + esc(info.src) + '" alt="' + esc(info.title) + '">';
+
+        box = document.createElement('div');
+        box.className = 'media-back';
+        box.setAttribute('role', 'dialog');
+        box.setAttribute('aria-modal', 'true');
+        box.innerHTML =
+            '<div class="media-modal">' +
+            '<div class="media-head"><b>' + esc(info.title) + '</b><button type="button" class="media-x" data-media-close aria-label="' + t('close') + '">✕</button></div>' +
+            '<div class="media-body ' + esc(info.kind) + '">' + body + '</div>' +
+            '<div class="media-foot"><span>' + (info.kind === 'youtube' ? t('hint') : '') + '</span><a href="' + esc(info.url) + '" target="_blank" rel="noopener noreferrer">' + t('ext') + '</a></div>' +
+            '</div>';
+        document.body.appendChild(box);
+        document.documentElement.classList.add('media-open');
+    }
+
+    document.addEventListener('click', function (ev) {
+        var tgt = ev.target;
+        if (!tgt || !tgt.closest) return;
+        if (box && (tgt.closest('[data-media-close]') || tgt === box)) { close(); return; }
+        var a = tgt.closest('[data-media]');
+        if (a && a.getAttribute('data-src')) {
+            ev.preventDefault();
+            open({
+                kind: a.getAttribute('data-media'), src: a.getAttribute('data-src'),
+                title: a.getAttribute('data-title') || '', url: a.getAttribute('data-url') || a.getAttribute('href') || a.getAttribute('data-src')
+            });
+        }
+    });
+    document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') close(); });
+
+    return { open: open, close: close };
+})();
+
 // Rest timer — runs entirely in the browser (no server round-trip per second).
 // The countdown is based on a deadline timestamp, so it stays correct even if the tab is throttled or delayed.
 window.gymTimer = (function () {
-    var state = { total: 0, deadline: 0, remaining: 0, running: false, over: false, label: '' };
+    var state = { total: 0, deadline: 0, remaining: 0, running: false, over: false, label: '', media: null };
     var tick = null;
     var audioCtx = null;
 
     // Texts for the two supported languages (the page language comes from <html lang>).
     var TEXT = {
-        ms: { pause: 'Pause', resume: 'Resume', add: '+15s', reset: 'Reset', close: 'Tutup', go: 'Teruskan ▶', rest: 'Rehat', resting: 'Berehat…', paused: 'Dijeda', over: 'REST TIME OVER!' },
-        en: { pause: 'Pause', resume: 'Resume', add: '+15s', reset: 'Reset', close: 'Close', go: 'Continue ▶', rest: 'Rest', resting: 'Resting…', paused: 'Paused', over: 'REST TIME OVER!' }
+        ms: { pause: 'Pause', resume: 'Resume', add: '+15s', reset: 'Reset', close: 'Tutup', go: 'Teruskan ▶', rest: 'Rehat', resting: 'Berehat…', paused: 'Dijeda', over: 'REST TIME OVER!', watch: 'Tonton video senaman seterusnya', viewImg: 'Lihat gambar senaman seterusnya' },
+        en: { pause: 'Pause', resume: 'Resume', add: '+15s', reset: 'Reset', close: 'Close', go: 'Continue ▶', rest: 'Rest', resting: 'Resting…', paused: 'Paused', over: 'REST TIME OVER!', watch: 'Watch the next exercise video', viewImg: 'View the next exercise image' }
     };
     function t(key) {
         var lang = ((document.documentElement.lang || 'ms') + '').slice(0, 2);
@@ -138,7 +201,7 @@ window.gymTimer = (function () {
         if (!el.querySelector('.rt-time')) {
             el.innerHTML =
                 '<div class="rt-inner">' +
-                '<div class="rt-info"><div class="rt-label"></div><div class="rt-time" aria-live="off">00:00</div><div class="rt-msg"></div></div>' +
+                '<div class="rt-info"><div class="rt-label"></div><div class="rt-time" aria-live="off">00:00</div><div class="rt-msg"></div><div class="rt-media"></div></div>' +
                 '<div class="rt-btns">' +
                 '<button type="button" data-a="pause" class="rt-btn">' + t('pause') + '</button>' +
                 '<button type="button" data-a="add" class="rt-btn">' + t('add') + '</button>' +
@@ -163,6 +226,28 @@ window.gymTimer = (function () {
         el.querySelector('.rt-label').textContent = state.label || t('rest');
         el.querySelector('.rt-time').textContent = fmt(rem);
         el.querySelector('.rt-msg').textContent = state.over ? t('over') : (state.running ? t('resting') : t('paused'));
+        // Link to the next exercise's video / image, so the user can prepare while resting (rebuilt only when it changes).
+        var slot = el.querySelector('.rt-media');
+        var key = state.media ? state.media.url + '|' + state.media.title : '';
+        if (slot && slot.getAttribute('data-key') !== key) {
+            slot.setAttribute('data-key', key);
+            slot.textContent = '';
+            if (state.media) {
+                var a = document.createElement('a');
+                a.className = 'rt-watch';
+                a.href = state.media.url;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                if (state.media.kind && state.media.kind !== 'link' && state.media.src) {
+                    a.setAttribute('data-media', state.media.kind);
+                    a.setAttribute('data-src', state.media.src);
+                }
+                a.setAttribute('data-title', state.media.title || '');
+                a.setAttribute('data-url', state.media.url);
+                a.textContent = (state.media.kind === 'image' ? '🖼 ' + t('viewImg') : '▶ ' + t('watch'));
+                slot.appendChild(a);
+            }
+        }
         var pause = el.querySelector('[data-a=pause]');
         pause.textContent = state.running ? t('pause') : t('resume');
         pause.disabled = state.over;
@@ -198,7 +283,7 @@ window.gymTimer = (function () {
         render();
     }
 
-    function begin(seconds, label) {
+    function begin(seconds, label, media) {
         try {
             var AC = window.AudioContext || window.webkitAudioContext;
             if (AC && !audioCtx) audioCtx = new AC();
@@ -207,6 +292,7 @@ window.gymTimer = (function () {
 
         state.total = seconds;
         state.label = label || '';
+        state.media = (media && media.url) ? media : null;
         state.over = false;
         state.running = true;
         state.deadline = Date.now() + seconds * 1000;
